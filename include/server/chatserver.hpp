@@ -5,6 +5,7 @@
 #include <muduo/net/EventLoop.h>
 using namespace muduo;
 using namespace muduo::net;
+using namespace std::placeholders;
 
 // 聊天服务器的主类
 class ChatServer
