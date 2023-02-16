@@ -2,6 +2,7 @@
 #define CHATSERVICE_H
 
 #include "json.hpp"
+#include "model/usermodel.hpp"
 using json = nlohmann::json;
 
 #include <functional>
@@ -33,6 +34,9 @@ private:
     ChatService();
 
     std::unordered_map<int, MsgHandler> _msgHandlerMap;
+
+    // 数据操作类对象
+    UserModel _userModel;
 };
 
 #endif
