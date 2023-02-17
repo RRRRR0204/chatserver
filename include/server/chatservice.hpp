@@ -1,9 +1,10 @@
 #ifndef CHATSERVICE_H
 #define CHATSERVICE_H
 
-#include "json.hpp"
 #include "model/usermodel.hpp"
 #include "model/offlinemessagemodel.hpp"
+#include "model/friendmodel.hpp"
+#include "json.hpp"
 using json = nlohmann::json;
 
 #include <functional>
@@ -30,6 +31,8 @@ public:
     void reg(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 点对点聊天业务
     void oneChat(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 添加好友业务
+    void addFriend(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 处理客户端异常退出
     void clientCloseException(const TcpConnectionPtr &conn);
     // 服务器异常退出，重置方法
@@ -51,6 +54,7 @@ private:
     // 数据操作类对象
     UserModel _userModel;
     OfflineMsgModel _offlineMsgModel;
+    FriendMdodel _friendModel;
 };
 
 #endif
