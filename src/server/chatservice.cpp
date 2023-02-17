@@ -56,6 +56,12 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
         }
         else
         {
+            // 登录成功，记录用户连接信息（减小锁的粒度）
+            {
+                std::lock_guard<std::mutex> lock(_connMutex);
+                _userConnMap.insert({id, conn});
+            }
+
             // 登录成功，更新用户状态信息
             user.setState("online");
             _userModel.updateState(user);
@@ -109,5 +115,31 @@ void ChatService::reg(const TcpConnectionPtr &conn, json &js, Timestamp time)
         response["errno"] = 1;
 
         conn->send(response.dump());
+    }
+}
+
+// 处理客户端异常退出
+void ChatService::clientCloseException(const TcpConnectionPtr &conn)
+{
+    User user;
+    {
+        std::lock_guard<std::mutex> lock(_connMutex);
+        for (auto it = _userConnMap.begin(); it != _userConnMap.end(); ++it)
+        {
+            if (it->second == conn)
+            {
+                // 从在线map表删除该用户
+                user.setId(it->first);
+                _userConnMap.erase(it);
+                break;
+            }
+        }
+    }
+
+    // 更新数据库中的用户状态
+    if (user.getId() != -1)
+    {
+        user.setState("offline");
+        _userModel.updateState(user);
     }
 }
