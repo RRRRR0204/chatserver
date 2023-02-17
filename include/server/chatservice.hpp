@@ -27,6 +27,8 @@ public:
     void login(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 处理注册业务
     void reg(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 点对点聊天业务
+    void oneChat(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 处理客户端异常退出
     void clientCloseException(const TcpConnectionPtr &conn);
 
