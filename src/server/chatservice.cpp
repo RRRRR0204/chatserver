@@ -1,6 +1,7 @@
 #include "chatservice.hpp"
 #include "public.hpp"
 
+#include <vector>
 #include <muduo/base/Logging.h>
 using namespace muduo;
 
@@ -73,6 +74,15 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
             response["id"] = user.getId();
             response["name"] = user.getName();
 
+            // 查询用户是否有离线消息
+            std::vector<std::string> vec = _offlineMsgModel.query(id);
+            if (!vec.empty())
+            {
+                response["offlinemsg"] = vec;
+                // 读取后删除离线消息
+                _offlineMsgModel.remove(id);
+            }
+
             conn->send(response.dump());
         }
     }
@@ -136,6 +146,7 @@ void ChatService::oneChat(const TcpConnectionPtr &conn, json &js, Timestamp time
     }
 
     // to用户不在线，存储离线消息
+    _offlineMsgModel.insert(toid, js.dump());
 }
 
 // 处理客户端异常退出

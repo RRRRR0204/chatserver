@@ -3,6 +3,7 @@
 
 #include "json.hpp"
 #include "model/usermodel.hpp"
+#include "model/offlinemessagemodel.hpp"
 using json = nlohmann::json;
 
 #include <functional>
@@ -47,6 +48,7 @@ private:
 
     // 数据操作类对象
     UserModel _userModel;
+    OfflineMsgModel _offlineMsgModel;
 };
 
 #endif
