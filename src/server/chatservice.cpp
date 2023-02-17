@@ -174,3 +174,10 @@ void ChatService::clientCloseException(const TcpConnectionPtr &conn)
         _userModel.updateState(user);
     }
 }
+
+// 服务器异常退出，重置方法
+void ChatService::reset()
+{
+    // 把online用户的状态设置成offline
+    _userModel.resetState();
+}
