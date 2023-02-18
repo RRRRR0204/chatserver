@@ -18,6 +18,9 @@ ChatService::ChatService()
     _msgHandlerMap.insert({REG_MSG, std::bind(&ChatService::reg, this, _1, _2, _3)});
     _msgHandlerMap.insert({ONE_CHAT_MSG, std::bind(&ChatService::oneChat, this, _1, _2, _3)});
     _msgHandlerMap.insert({ADD_FRIEND_MSG, std::bind(&ChatService::addFriend, this, _1, _2, _3)});
+    _msgHandlerMap.insert({CREATE_GROUP_MSG, std::bind(&ChatService::createGroup, this, _1, _2, _3)});
+    _msgHandlerMap.insert({ADD_GROUP_MSG, std::bind(&ChatService::addGroup, this, _1, _2, _3)});
+    _msgHandlerMap.insert({GROUP_CHAT_MSG, std::bind(&ChatService::groupChat, this, _1, _2, _3)});
 }
 
 // 获取消息对应的处理器
@@ -53,7 +56,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
             json response;
             response["msgid"] = LOGIN_MSG_ACK;
             response["errno"] = 2;
-            response["errmsg"] = "该账号已经登录";
+            response["errmsg"] = "this account is online, use another!";
 
             conn->send(response.dump());
         }
@@ -101,6 +104,34 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
                 response["friends"] = vec2;
             }
 
+            // 查询用户的群组信息并返回
+            std::vector<Group> userGroupVec = _groupModel.queryGroups(id);
+            if (!userGroupVec.empty())
+            {
+                std::vector<std::string> groupVec;
+                for (Group &group : userGroupVec)
+                {
+                    json grpjs;
+                    grpjs["id"] = group.getId();
+                    grpjs["groupname"] = group.getName();
+                    grpjs["groupdesc"] = group.getDesc();
+
+                    std::vector<std::string> userVec;
+                    for (GroupUser &user : group.getUsers())
+                    {
+                        json usrjs;
+                        usrjs["id"] = user.getId();
+                        usrjs["name"] = user.getName();
+                        usrjs["state"] = user.getState();
+                        usrjs["role"] = user.getRole();
+                        userVec.push_back(usrjs.dump());
+                    }
+                    grpjs["users"] = userVec;
+                    groupVec.push_back(grpjs.dump());
+                }
+                response["groups"] = groupVec;
+            }
+
             conn->send(response.dump());
         }
     }
@@ -110,7 +141,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
         json response;
         response["msgid"] = LOGIN_MSG_ACK;
         response["errno"] = 1;
-        response["errmsg"] = "用户名或者密码错误";
+        response["errmsg"] = "id or password is wrong!";
 
         conn->send(response.dump());
     }
