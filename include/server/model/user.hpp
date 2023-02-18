@@ -22,7 +22,7 @@ public:
     std::string getPwd() { return this->password; }
     std::string getState() { return this->state; }
 
-private:
+protected:
     int id;
     std::string name;
     std::string password;
