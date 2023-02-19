@@ -15,7 +15,8 @@ enum EnMsgType
     ADD_FRIEND_MSG,   //< 添加好友消息 6
     CREATE_GROUP_MSG, //< 创建群组消息 7
     ADD_GROUP_MSG,    //< 加入群组消息 8
-    GROUP_CHAT_MSG    //< 群组聊天消息 9
+    GROUP_CHAT_MSG,   //< 群组聊天消息 9
+    LOGINOUT_MSG      //< 注销消息 10
 };
 
 #endif

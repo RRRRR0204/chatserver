@@ -40,7 +40,9 @@ public:
     void addGroup(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 群组聊天
     void groupChat(const TcpConnectionPtr &conn, json &js, Timestamp time);
-
+    
+    // 处理注销业务
+    void loginout(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 处理客户端异常退出
     void clientCloseException(const TcpConnectionPtr &conn);
     // 服务器异常退出，重置方法
