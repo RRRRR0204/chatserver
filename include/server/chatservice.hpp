@@ -5,6 +5,7 @@
 #include "model/offlinemessagemodel.hpp"
 #include "model/friendmodel.hpp"
 #include "model/groupmodel.hpp"
+#include "redis/redis.hpp"
 #include "json.hpp"
 using json = nlohmann::json;
 
@@ -51,6 +52,9 @@ public:
     // 获取消息对应的处理器
     MsgHandler getHandler(int msgid);
 
+     // 从redis消息队列中获取订阅的消息
+    void handleRedisSubscribeMessage(int, string);
+
 private:
     ChatService();
 
@@ -66,6 +70,9 @@ private:
     OfflineMsgModel _offlineMsgModel;
     FriendMdodel _friendModel;
     GroupModel _groupModel;
+
+    // Redis对象
+    Redis _redis;
 };
 
 #endif
